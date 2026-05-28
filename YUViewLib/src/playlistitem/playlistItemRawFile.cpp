@@ -134,10 +134,19 @@ playlistItemRawFile::playlistItemRawFile(const QString &rawFilePath,
 
     if (!this->video->isFormatValid())
     {
-      // Load 24883200 bytes from the input and try to get the format from the correlation.
-      QByteArray rawData;
-      this->dataSource.readBytes(rawData, 0, 24883200);
-      this->video->setFormatFromCorrelation(rawData, this->dataSource.getFileSize().value_or(-1));
+      if (this->rawFormat == video::RawFormat::YUV)
+      {
+        // Custom: default unknown-resolution .yuv to 3840x2160 (YUV420 8bit from handler ctor)
+        // instead of the unreliable correlation guess.
+        this->video->setFrameSize(Size(3840, 2160));
+      }
+      else
+      {
+        // Load 24883200 bytes from the input and try to get the format from the correlation.
+        QByteArray rawData;
+        this->dataSource.readBytes(rawData, 0, 24883200);
+        this->video->setFormatFromCorrelation(rawData, this->dataSource.getFileSize().value_or(-1));
+      }
     }
   }
   else

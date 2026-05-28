@@ -3,6 +3,10 @@ QT += core gui widgets opengl xml concurrent network
 TARGET = YUView
 TEMPLATE = app
 CONFIG += c++20
+macx {
+  QMAKE_CXXFLAGS += -std=c++20
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 11.0
+}
 CONFIG -= debug_and_release
 
 SOURCES += $$files(src/*.cpp, false)
